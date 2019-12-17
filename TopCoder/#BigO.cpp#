@@ -1,0 +1,101 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAXN = 56;
+
+class BigO {
+public :
+  BigO () {
+#ifdef Atrin
+#endif
+    
+  }
+
+  void create_topo(int v) {
+    mark[v] = true;
+    for(auto w : g[v])
+      if(!mark[w])
+	create_topo(w);
+    topo.push_back(v);
+  }
+
+  void create_scc(int v,int I ) {
+    mark[v] = false;
+    scc[v] = I;
+    size[I]++;
+    for(auto u : jda[v])
+      if(mark[u])
+	create_scc(u,I);
+  }
+
+  bool check(int v) {
+    int cnt = 0;
+    mark[v] = true;
+    for(auto w : g[v]) {
+      if(scc[w]!=scc[v]) continue;
+      cnt++;
+      if(!mark[w]) if(!check(w)) return false;
+    }
+    return cnt<2;
+  }
+
+  void calc(int w) {
+    for(auto u : scc_g[w])
+      ans[w] = max(dis[w],dis[u]+(size[w]>1));
+  }
+  
+  int minK(vector<string> gg) {
+    int N = gg.size();
+    for(int i = 0;i<gg.size();i++) {
+      for(int I = 0;I<gg[0].size();I++)
+	if(gg[i][I]=='Y')
+	  g[i].push_back(I),jda[I].push_back(i) ;
+    }
+    for(int i = 0;i<N;i++)
+      if(!mark[i])
+	create_topo(i);
+    reverse(topo.begin(),topo.end());
+    int I = 0;
+    vector<int>scc_topo;
+    for(auto w : topo)
+      if(mark[w])
+	create_scc(w,I++),scc_topo.insert(scc_topo.begin(),I);
+    for(auto w : topo)
+      if(!mark[w])
+	if(!check(w)) return -1;
+    reverse(topo.begin(),topo.end());
+    for(auto w : topo)
+      for(auto cc : g[w])
+	scc_g[scc[w]].insert(scc[cc]);
+    for(auto w : scc_topo)
+      calc(w);
+    int ans = 0;
+    for(auto w : scc_topo)
+      ans = max(ans,dis[w]);
+    return ans;
+  }
+private :
+  vector<int> g[MAXN];
+  vector<int> jda[MAXN];
+  vector<int> topo;
+  set<int> scc_g[MAXN];
+  int scc[MAXN];
+  int size[MAXN];
+  int dis[MAXN];
+  bool mark[MAXN];
+};
+
+#ifdef Atrin
+int main() {
+  int n;cin >> n;
+  vector<string> vv;
+  for(int i = 0;i<n;i++) {
+    string str;cin >> str;
+    vv.push_back(str);
+  }
+  BigO *ww = new BigO();
+  int ans = ww->minK(vv);
+  cout << ans << endl;
+  return 0;
+}
+#endif

@@ -1,0 +1,52 @@
+#include <iostream>
+#include <map>
+#include <vector>
+using namespace std;
+
+const int MaxN = 1e6 + 6.66;
+vector<int> par[MaxN];
+map<vector<int>, int> dp;
+int A, B;
+
+int P(int mask, vector<int>& v) {
+  int ans = 1;
+  for(int i = 0; i < (v.size()); i++)
+    if(mask & (1 << i)) ans *= v[i];
+  return ans;
+}
+
+int G(int x, int y) {
+  return x / y;
+}
+
+int get(int i) {
+  vector<int>& v = par[i];
+  if(dp[v]) return dp[v];
+  int ans = 0;
+  for(int mask = 0; mask < (1 << v.size()); mask++)
+  {
+    ans += (__builtin_popcount(mask) % 2 ? -1 : 1) * (G(P(mask, v), B) - G(P(mask, v), A)) ;
+  }
+  return ans;
+}
+
+void init() {
+  for(int i = 2; i < MaxN; i++) {
+    if(par[i].size()) continue;
+    for(int j = i; j < MaxN; j++) 
+      par[j].push_back(i);
+  }
+}
+
+int main() {
+  init();
+  int a, b, c, d;
+  cin >> a >> b >> c >> d;
+  if(b - a > d - c) swap(a, c), swap(b, d);
+  A = c, B = d;
+  long long ans = 0;
+  for(int i = a; i <= b; i++)
+    ans += get(i);
+  cout << ans << endl;
+  return 0;
+}

@@ -1,0 +1,39 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAXN = 50;
+
+long long calc(string& x) {
+    long long damage = 1;
+    long long sum = 0;
+    for( auto w : x)
+        if( w == 'S' ) sum += damage;
+        else damage <<= 1;
+    return sum;
+}
+
+int main () {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL),cout.tie(NULL);
+    int T;cin >> T;
+    for(int tt = 1;tt<=T;tt++) {
+        long long d;cin >> d;
+        string str; cin >> str;
+        int alts = 0;
+        while( calc(str) > d) {
+            bool changed = false;
+            for(int i = 0;i<str.size() - 1;i++)
+                if( str[i] == 'C' && str[i+1] == 'S') {
+                    swap(str[i],str[i+1]);
+                    changed = true;
+                    break;
+                }
+            if( !changed ) break;
+            alts ++ ;
+        }
+	cout << "Case #" << tt << ": " ;
+        if( calc(str) <= d) cout << alts << endl;
+	else cout << "IMPOSSIBLE" << endl;
+    }
+    return 0;
+}
