@@ -1,0 +1,8 @@
+[[layers]]
+  name = "lang#c"
+  [layer.clang_std]
+    cpp = "c++17"
+  [layer.clang_Wall]
+  [layer.clang_Wextra]
+  [layer.clang_O2]
+  [layer.clang_DAtrin]
